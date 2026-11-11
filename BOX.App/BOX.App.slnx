@@ -3,7 +3,7 @@
     <Platform Name="Any CPU" />
     <Platform Name="x64" />
   </Configurations>
-  <Project Path="BOX.App/BOX.App.csproj">
+  <Project Path="BOX.App/BOX.App.csproj" Id="df42b6b3-64a6-4a56-97ee-2db07864bf80">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
 </Solution>
