@@ -8,11 +8,19 @@ namespace BOX.App
 
     public partial class BranchForm : Form
     {
-        public BranchForm()
+        private readonly string currentUserId;
+
+        public BranchForm() : this("user01")
         {
-            InitializeComponent();
         }
 
+       
+
+        public BranchForm(string userId)
+        {
+            currentUserId = userId;
+            InitializeComponent();
+        }
         // ==========================================
         // 1. 폼 로드 시 실행 (처음엔 목록 비워두기)
         // ==========================================
@@ -194,6 +202,16 @@ namespace BOX.App
             // 콤보박스를 바꾸는 순간 바로 데이터 조회!
             LoadBranchData(region, keyword);
             ClearDetailLabels();
+        }
+
+        private void btnParcelRequest_Click(object sender, EventArgs e)
+        {
+            using (ParcelForm parcelForm = new ParcelForm(currentUserId))
+            {
+                Hide();
+                parcelForm.ShowDialog(this);
+                Show();
+            }
         }
     }
 }

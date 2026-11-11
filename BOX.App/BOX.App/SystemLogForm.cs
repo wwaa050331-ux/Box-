@@ -273,5 +273,10 @@ namespace BOX.App
             btnComplete.Enabled = false;
             btnComplete.BackColor = SystemColors.Control;
         }
+        private void ParcelPickupForm_Load(object sender, EventArgs e)
+        {
+            SystemLogForm_Load(sender, e);
+        }
+
     }
 }

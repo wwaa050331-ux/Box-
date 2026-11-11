@@ -11,7 +11,7 @@ namespace BOX.App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.Run(new ParcelForm("user01"));
+            Application.Run(new UserForm());
         }
     }
 }

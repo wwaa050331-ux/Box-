@@ -77,7 +77,8 @@ namespace BOX.App
                     MessageBox.Show($"{userName}님 환영합니다!", "로그인 성공", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     // 로그인 성공 시 지점 목록 폼(BranchForm)을 띄우고 현재 폼 숨김
-                    BranchForm branchForm = new BranchForm();
+                    BranchForm branchForm = new BranchForm(userId);
+                    branchForm.FormClosed += (closedSender, closedEventArgs) => this.Close();
                     branchForm.Show();
                     this.Hide();
                 }
