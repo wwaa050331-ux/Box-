@@ -70,7 +70,7 @@ CREATE TABLE Lockers (
     location_desc VARCHAR2(100),
     status        VARCHAR2(20) DEFAULT 'EMPTY',
     CONSTRAINT fk_locker_branch FOREIGN KEY (branch_id) REFERENCES Branches(branch_id) ON DELETE SET NULL,
-    CONSTRAINT chk_locker_status CHECK (status IN ('EMPTY', 'OCCUPIED', 'BROKEN'))
+    CONSTRAINT chk_locker_status CHECK (status IN ('EMPTY', 'RESERVED', 'OCCUPIED', 'BROKEN'))
 )
 /
 
