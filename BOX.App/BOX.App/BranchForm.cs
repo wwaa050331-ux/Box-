@@ -16,7 +16,7 @@ namespace BOX.App
         {
         }
 
-       
+
 
         public BranchForm(string userId)
         {
@@ -223,6 +223,26 @@ namespace BOX.App
             {
                 Hide();
                 parcelForm.ShowDialog(this);
+                Show();
+            }
+        }
+
+        private void btnMyPage_Click(object sender, EventArgs e)
+        {
+            using (MypageForm mypageForm = new MypageForm(currentUserId))
+            {
+                Hide();
+                mypageForm.ShowDialog(this);
+                Show();
+            }
+        }
+
+        private void btnSystemLog_Click(object sender, EventArgs e)
+        {
+            using (SystemLogForm systemLogForm = new SystemLogForm(currentUserId))
+            {
+                Hide();
+                systemLogForm.ShowDialog(this);
                 Show();
             }
         }

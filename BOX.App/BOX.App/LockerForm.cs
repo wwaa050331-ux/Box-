@@ -17,6 +17,8 @@ namespace BOX.App
         private readonly Button refreshButton = new Button();
         private readonly Button selectButton = new Button();
         private readonly Label branchLabel = new Label();
+        private readonly int selectedBranchId;
+        private readonly string selectedBranchName;
 
         public int SelectedLockerId { get; private set; }
         public string SelectedLockerSize { get; private set; }
@@ -31,9 +33,13 @@ namespace BOX.App
         {
             selectedBranchId = branchId;
             selectedBranchName = branchName;
+
             InitializeForm();
             Load += LockerForm_Load;
         }
+
+
+
 
         private void InitializeForm()
         {

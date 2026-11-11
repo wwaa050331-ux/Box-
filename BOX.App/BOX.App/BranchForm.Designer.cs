@@ -51,6 +51,8 @@
             this.lblSelectedAddress = new System.Windows.Forms.Label();
             this.lblSelectedPhone = new System.Windows.Forms.Label();
             this.btnParcelRequest = new System.Windows.Forms.Button();
+            this.btnMyPage = new System.Windows.Forms.Button();
+            this.btnSystemLog = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -312,12 +314,34 @@
             this.btnParcelRequest.Text = "택배 신청하기";
             this.btnParcelRequest.UseVisualStyleBackColor = true;
             this.btnParcelRequest.Click += new System.EventHandler(this.btnParcelRequest_Click);
-            // 
+            //
+            // btnMyPage
+            //
+            this.btnMyPage.Location = new System.Drawing.Point(952, 740);
+            this.btnMyPage.Name = "btnMyPage";
+            this.btnMyPage.Size = new System.Drawing.Size(213, 70);
+            this.btnMyPage.TabIndex = 15;
+            this.btnMyPage.Text = "마이페이지";
+            this.btnMyPage.UseVisualStyleBackColor = true;
+            this.btnMyPage.Click += new System.EventHandler(this.btnMyPage_Click);
+            //
+            // btnSystemLog
+            //
+            this.btnSystemLog.Location = new System.Drawing.Point(952, 825);
+            this.btnSystemLog.Name = "btnSystemLog";
+            this.btnSystemLog.Size = new System.Drawing.Size(213, 70);
+            this.btnSystemLog.TabIndex = 16;
+            this.btnSystemLog.Text = "시스템 로그 / 수령";
+            this.btnSystemLog.UseVisualStyleBackColor = true;
+            this.btnSystemLog.Click += new System.EventHandler(this.btnSystemLog_Click);
+            //
             // BranchForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1317, 1131);
+            this.Controls.Add(this.btnSystemLog);
+            this.Controls.Add(this.btnMyPage);
             this.Controls.Add(this.btnParcelRequest);
             this.Controls.Add(this.lblSelectedPhone);
             this.Controls.Add(this.lblSelectedAddress);
@@ -376,5 +400,7 @@
         private System.Windows.Forms.Label lblSelectedAddress;
         private System.Windows.Forms.Label lblSelectedPhone;
         private System.Windows.Forms.Button btnParcelRequest;
+        private System.Windows.Forms.Button btnMyPage;
+        private System.Windows.Forms.Button btnSystemLog;
     }
 }

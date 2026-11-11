@@ -12,11 +12,14 @@ namespace BOX.App
         private int currentLockerId = -1;
         private string currentUserId = string.Empty;
 
-        public SystemLogForm() // 생성자명 변경
+        public SystemLogForm() : this("user01")
         {
-            InitializeComponent();
+        }
 
-            // Load 이벤트 연결 누락과 무관하게 폼 실행 즉시 100% 강제 실행
+        public SystemLogForm(string userId)
+        {
+            currentUserId = userId;
+            InitializeComponent();
             InitDatabaseAndUI();
         }
 
@@ -25,36 +28,11 @@ namespace BOX.App
         // ==========================================
         private void InitDatabaseAndUI()
         {
-            try
-            {
-                // 1. 우측 이용 내역/로그 깨끗하게 비우기 (실행할 때마다 초기화)
-                DBHelper.ExecuteNonQuery("DELETE FROM SystemLogs");
-
-                // 2. 기존 택배 데이터 비우고 6자리 5개 튜플 통째로 재등록
-                DBHelper.ExecuteNonQuery("DELETE FROM Parcels");
-
-                string insertSql = @"
-                    INSERT ALL
-                      INTO Parcels VALUES (1, 'user01', 101, '111111', TO_DATE('2026-11-08 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-11 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-08 18:30:00', 'YYYY-MM-DD HH24:MI:SS'), 'RETRIEVED')
-                      INTO Parcels VALUES (2, 'user02', 102, '748291', TO_DATE('2026-11-09 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-12 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), NULL, 'STORED')
-                      INTO Parcels VALUES (3, 'user03', 103, '123456', TO_DATE('2026-11-09 11:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-12 11:30:00', 'YYYY-MM-DD HH24:MI:SS'), NULL, 'STORED')
-                      INTO Parcels VALUES (4, 'user01', 101, '333444', TO_DATE('2026-11-05 14:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-08 14:00:00', 'YYYY-MM-DD HH24:MI:SS'), NULL, 'EXPIRED')
-                      INTO Parcels VALUES (5, 'user02', 105, '777888', TO_DATE('2026-11-09 15:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-12 15:00:00', 'YYYY-MM-DD HH24:MI:SS'), NULL, 'RESERVED')
-                    SELECT * FROM DUAL";
-                DBHelper.ExecuteNonQuery(insertSql);
-
-                // 3. 사물함 상태 복구
-                DBHelper.ExecuteNonQuery("UPDATE Lockers SET status = 'OCCUPIED' WHERE locker_id IN (102, 103)");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"DB 초기화 실패 (원인): {ex.Message}", "초기화 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
+            // 화면을 열 때 기존 택배/로그 데이터를 삭제하거나 샘플 데이터로 덮어쓰지 않습니다.
+            // 현재 DB에 저장된 이용 내역을 그대로 표시합니다.
             ResetUI();
-            LoadSystemLogs(); // 우측 그리드뷰 빈 상태로 시작
+            LoadSystemLogs();
         }
-
         private void SystemLogForm_Load(object sender, EventArgs e)
         {
             // 이벤트명 동기화
@@ -256,7 +234,6 @@ namespace BOX.App
         {
             currentParcelId = -1;
             currentLockerId = -1;
-            currentUserId = string.Empty;
 
             txtAuthCode.Clear();
             lblAuthStatus.Visible = false;

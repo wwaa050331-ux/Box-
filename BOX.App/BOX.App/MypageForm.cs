@@ -16,8 +16,13 @@ namespace BOX.App
         // 테스트용 로그인 계정 고정 (나중에 로그인 폼과 연결 시 변경)
         private string currentUserId = "user01";
 
-        public MypageForm()
+        public MypageForm() : this("user01")
         {
+        }
+
+        public MypageForm(string userId)
+        {
+            currentUserId = userId;
             InitializeComponent();
             LoadUserInfo(); // 폼 로드 시 정보 불러오기
         }

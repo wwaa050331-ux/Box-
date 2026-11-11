@@ -188,6 +188,14 @@ namespace BOX.App
                 authCodeTextBox.Text = authCode;
                 statusLabel.Text = "상태: 보관 신청이 완료되었습니다. 택배기사에게 인증번호를 전달하세요.";
                 MessageBox.Show("보관 신청과 인증번호 발급이 완료되었습니다.");
+
+                // 신청 완료 후 시스템 로그/인증 화면으로 이동합니다.
+                using (SystemLogForm systemLogForm = new SystemLogForm(userId))
+                {
+                    Hide();
+                    systemLogForm.ShowDialog(this);
+                    Show();
+                }
             }
             catch (Exception ex)
             {
