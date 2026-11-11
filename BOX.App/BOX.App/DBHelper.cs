@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using Oracle.DataAccess.Client;
 
@@ -85,7 +85,12 @@ namespace BOX.App
                     try
                     {
                         conn.Open();
-                        affectedRows = cmd.ExecuteNonQuery();
+                        using (OracleTransaction transaction = conn.BeginTransaction())
+                        {
+                            cmd.Transaction = transaction;
+                            affectedRows = cmd.ExecuteNonQuery();
+                            transaction.Commit();
+                        }
                     }
                     catch (Exception ex)
                     {

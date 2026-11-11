@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using System.Drawing;
 using System.Security.Cryptography;
@@ -129,6 +129,12 @@ namespace BOX.App
                 return;
             }
 
+            if (parcelId != 0)
+            {
+                MessageBox.Show("이미 보관 신청이 완료되었습니다.");
+                return;
+            }
+
             try
             {
                 authCode = GenerateAuthCode();
@@ -148,12 +154,18 @@ namespace BOX.App
                     new OracleParameter("auth_code", OracleDbType.Varchar2) { Value = authCode }
                 });
 
-                DBHelper.ExecuteNonQuery(
+                int lockerRows = DBHelper.ExecuteNonQuery(
                     "UPDATE Lockers SET status = 'RESERVED' WHERE locker_id = :locker_id AND status = 'EMPTY'",
                     new[]
                     {
                         new OracleParameter("locker_id", OracleDbType.Int32) { Value = selectedLockerId }
                     });
+
+                if (lockerRows == 0)
+                {
+                    MessageBox.Show("선택한 보관함이 더 이상 비어 있지 않습니다. 새로고침 후 다시 선택해주세요.");
+                    return;
+                }
 
                 authCodeTextBox.Text = authCode;
                 statusLabel.Text = "상태: 보관 신청이 완료되었습니다. 택배기사에게 인증번호를 전달하세요.";
