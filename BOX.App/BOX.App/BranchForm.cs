@@ -9,6 +9,8 @@ namespace BOX.App
     public partial class BranchForm : Form
     {
         private readonly string currentUserId;
+        private int selectedBranchId;
+        private string selectedBranchName;
 
         public BranchForm() : this("user01")
         {
@@ -141,7 +143,10 @@ namespace BOX.App
 
             DataGridViewRow row = dgvBranches.Rows[e.RowIndex];
 
-            lblSelectedName.Text = row.Cells["지점명"].Value.ToString();
+            selectedBranchId = Convert.ToInt32(row.Cells["지점번호"].Value);
+            selectedBranchName = Convert.ToString(row.Cells["지점명"].Value);
+
+            lblSelectedName.Text = selectedBranchName;
             lblSelectedAddress.Text = "주소: " + row.Cells["주소"].Value.ToString();
             lblSelectedPhone.Text = "연락처: " + row.Cells["연락처"].Value.ToString();
 
@@ -183,6 +188,8 @@ namespace BOX.App
 
         private void ClearDetailLabels()
         {
+            selectedBranchId = 0;
+            selectedBranchName = null;
             lblSelectedName.Text = "선택된 지점 없음";
             lblSelectedAddress.Text = "주소: ";
             lblSelectedPhone.Text = "연락처: ";
@@ -206,7 +213,13 @@ namespace BOX.App
 
         private void btnParcelRequest_Click(object sender, EventArgs e)
         {
-            using (ParcelForm parcelForm = new ParcelForm(currentUserId))
+            if (selectedBranchId == 0 || string.IsNullOrWhiteSpace(selectedBranchName))
+            {
+                MessageBox.Show("먼저 신청할 지점을 목록에서 선택해주세요.", "지점 선택", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (ParcelForm parcelForm = new ParcelForm(currentUserId, selectedBranchId, selectedBranchName))
             {
                 Hide();
                 parcelForm.ShowDialog(this);

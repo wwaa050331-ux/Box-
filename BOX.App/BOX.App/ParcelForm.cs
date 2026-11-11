@@ -14,6 +14,8 @@ namespace BOX.App
     public class ParcelForm : Form
     {
         private readonly string userId;
+        private readonly int selectedBranchId;
+        private readonly string selectedBranchName;
         private int selectedLockerId;
         private string selectedLockerLocation;
         private string authCode;
@@ -24,14 +26,22 @@ namespace BOX.App
         private readonly TextBox locationTextBox = new TextBox();
         private readonly TextBox authCodeTextBox = new TextBox();
         private readonly Label statusLabel = new Label();
+        private readonly Label branchTextLabel = new Label();
         private readonly Button selectLockerButton = new Button();
         private readonly Button requestButton = new Button();
         private readonly Button copyButton = new Button();
         private readonly Button depositButton = new Button();
 
         public ParcelForm(string userId)
+            : this(userId, 0, null)
+        {
+        }
+
+        public ParcelForm(string userId, int branchId, string branchName)
         {
             this.userId = userId;
+            this.selectedBranchId = branchId;
+            this.selectedBranchName = branchName;
             InitializeForm();
         }
 
@@ -47,43 +57,49 @@ namespace BOX.App
             userIdTextBox.ReadOnly = true;
             userIdTextBox.Text = userId;
 
-            AddLabel("보관함", 30, 75);
-            lockerTextBox.Location = new Point(160, 71);
+            AddLabel("신청 지점", 30, 75);
+            branchTextLabel.Location = new Point(160, 71);
+            branchTextLabel.AutoSize = true;
+            branchTextLabel.Text = string.IsNullOrWhiteSpace(selectedBranchName) ? "지점이 선택되지 않았습니다." : selectedBranchName;
+            Controls.Add(branchTextLabel);
+
+            AddLabel("보관함", 30, 120);
+            lockerTextBox.Location = new Point(160, 116);
             lockerTextBox.Width = 150;
             lockerTextBox.ReadOnly = true;
             selectLockerButton.Text = "보관함 선택";
-            selectLockerButton.Location = new Point(330, 70);
+            selectLockerButton.Location = new Point(330, 115);
             selectLockerButton.Width = 120;
             selectLockerButton.Click += SelectLockerButton_Click;
 
-            AddLabel("상세 위치", 30, 120);
-            locationTextBox.Location = new Point(160, 116);
+            AddLabel("상세 위치", 30, 165);
+            locationTextBox.Location = new Point(160, 161);
             locationTextBox.Width = 290;
             locationTextBox.ReadOnly = true;
 
-            AddLabel("인증번호", 30, 165);
-            authCodeTextBox.Location = new Point(160, 161);
+            AddLabel("인증번호", 30, 210);
+            authCodeTextBox.Location = new Point(160, 206);
             authCodeTextBox.Width = 150;
             authCodeTextBox.ReadOnly = true;
             copyButton.Text = "인증번호 복사";
-            copyButton.Location = new Point(330, 160);
+            copyButton.Location = new Point(330, 205);
             copyButton.Width = 120;
             copyButton.Click += CopyButton_Click;
 
             requestButton.Text = "보관 신청 및 인증번호 발급";
-            requestButton.Location = new Point(160, 215);
+            requestButton.Location = new Point(160, 260);
             requestButton.Width = 290;
             requestButton.Height = 35;
             requestButton.Click += RequestButton_Click;
 
             depositButton.Text = "택배기사 투입 완료 처리";
-            depositButton.Location = new Point(160, 265);
+            depositButton.Location = new Point(160, 310);
             depositButton.Width = 290;
             depositButton.Height = 35;
             depositButton.Click += DepositButton_Click;
 
             statusLabel.AutoSize = true;
-            statusLabel.Location = new Point(160, 325);
+            statusLabel.Location = new Point(160, 370);
             statusLabel.Text = "상태: 보관함과 택배 정보를 입력하세요.";
 
             Controls.Add(userIdTextBox);
@@ -108,7 +124,9 @@ namespace BOX.App
 
         private void SelectLockerButton_Click(object sender, EventArgs e)
         {
-            using (LockerForm form = new LockerForm())
+            using (LockerForm form = selectedBranchId > 0
+                ? new LockerForm(selectedBranchId, selectedBranchName)
+                : new LockerForm())
             {
                 if (form.ShowDialog(this) == DialogResult.OK)
                 {
