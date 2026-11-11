@@ -101,7 +101,8 @@ namespace BOX.App
 
         private void LoadLockers()
         {
-            if (branchComboBox.SelectedValue == null || !(branchComboBox.SelectedValue is int))
+            if (branchComboBox.SelectedValue == null ||
+        branchComboBox.SelectedValue is DataRowView)
             {
                 return;
             }
@@ -162,6 +163,24 @@ namespace BOX.App
         {
             MessageBox.Show("데이터베이스를 불러오지 못했습니다.\n" + ex.Message,
                 "DB 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // LockerForm
+            // 
+            this.ClientSize = new System.Drawing.Size(274, 229);
+            this.Name = "LockerForm";
+            this.Load += new System.EventHandler(this.LockerForm_Load_1);
+            this.ResumeLayout(false);
+
+        }
+
+        private void LockerForm_Load_1(object sender, EventArgs e)
+        {
+
         }
     }
 }
