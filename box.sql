@@ -1,11 +1,10 @@
 -- ==========================================================
--- ë¬´ì¸ íƒë°°í•¨ ê´€ë¦¬ ì‹œìŠ¤í…œ DB ì´ˆê¸°í™” ë° ìƒì„± ìŠ¤í¬ë¦½íŠ¸
--- ê´€ë¦¬ìž ê³„ì • ë©”ì¸ ê´€ë¦¬ìž: ì•„ì´ë”” admin / ë¹„ë°€ë²ˆí˜¸ admin1234 (ì´ë¦„: ì´ê´„ê´€ë¦¬ìž)
--- ë³´ì¡° ê´€ë¦¬ìž(ì½”ë“œí˜•): ì•„ì´ë”” MGR001 / ë¹„ë°€ë²ˆí˜¸ 9999 (ì´ë¦„: í˜„ìž¥ê´€ë¦¬ìž)
--- ì„ íƒ ê¸°ë¡ ê´€ë¦¬ ë²„íŠ¼(Delete ì¶”ê°€)/ê³¼ì œ ì±„ì  ê¸°ì¤€ ì¶©ì¡±
+-- ¹«ÀÎ ÅÃ¹èÇÔ °ü¸® ½Ã½ºÅÛ DB ÃÊ±âÈ­ ¹× »ý¼º ½ºÅ©¸³Æ®
+-- ½ÇÇà ½Ã ±âÁ¸ Å×ÀÌºí/½ÃÄö½º¸¦ »èÁ¦ÇÏ°í ÃÊ±â »óÅÂ·Î º¹±¸ÇÕ´Ï´Ù.
+-- °ü¸®ÀÚ °èÁ¤: admin / admin1234, º¸Á¶ °ü¸®ÀÚ: MGR001 / 9999
 -- ==========================================================
 
--- 1. ê¸°ì¡´ í…Œì´ë¸” ë° ì‹œí€€ìŠ¤ ì‚­ì œ (ì°¸ì¡° ë¬´ê²°ì„± ì—­ìˆœ: ìžì‹ -> ë¶€ëª¨)
+-- 1. ±âÁ¸ Å×ÀÌºí ¹× ½ÃÄö½º »èÁ¦ (Ç×»ó ÃÊ±âÈ­ ¸ÕÀú ½ÇÇà)
 DROP TABLE SystemLogs CASCADE CONSTRAINTS PURGE
 /
 DROP TABLE Parcels CASCADE CONSTRAINTS PURGE
@@ -27,22 +26,22 @@ DROP SEQUENCE seq_log_id
 /
 
 -- ==========================================================
--- 2. ì‹œí€€ìŠ¤ ìƒì„±
+-- 2. ½ÃÄö½º »ý¼º (»ùÇÃ µ¥ÀÌÅÍ ´ÙÀ½ ¹øÈ£ºÎÅÍ ½ÃÀÛ)
 -- ==========================================================
-CREATE SEQUENCE seq_branch_id START WITH 1 INCREMENT BY 1 NOCACHE
+CREATE SEQUENCE seq_branch_id START WITH 6 INCREMENT BY 1 NOCACHE
 /
-CREATE SEQUENCE seq_locker_id START WITH 101 INCREMENT BY 1 NOCACHE
+CREATE SEQUENCE seq_locker_id START WITH 111 INCREMENT BY 1 NOCACHE
 /
-CREATE SEQUENCE seq_parcel_id START WITH 1 INCREMENT BY 1 NOCACHE
+CREATE SEQUENCE seq_parcel_id START WITH 6 INCREMENT BY 1 NOCACHE
 /
-CREATE SEQUENCE seq_log_id    START WITH 1 INCREMENT BY 1 NOCACHE
+CREATE SEQUENCE seq_log_id    START WITH 6 INCREMENT BY 1 NOCACHE
 /
 
 -- ==========================================================
--- 3. í…Œì´ë¸” ìƒì„± (ERD êµ¬ì¡° ì¼ì¹˜)
+-- 3. Å×ÀÌºí »ý¼º (ERD ±¸Á¶ ÀÏÄ¡)
 -- ==========================================================
 
--- 1) ì‚¬ìš©ìž í…Œì´ë¸” (Users) - ê´€ë¦¬ìž ì½”ë“œ/ë¹„ë°€ë²ˆí˜¸ í¬í•¨
+-- 1) »ç¿ëÀÚ Å×ÀÌºí (Users)
 CREATE TABLE Users (
     user_id     VARCHAR2(20) PRIMARY KEY,
     name        VARCHAR2(50) NOT NULL,
@@ -55,7 +54,7 @@ CREATE TABLE Users (
 )
 /
 
--- 2) ì§€ì  í…Œì´ë¸” (Branches)
+-- 2) ÁöÁ¡ Å×ÀÌºí (Branches)
 CREATE TABLE Branches (
     branch_id   NUMBER PRIMARY KEY,
     branch_name VARCHAR2(100) NOT NULL,
@@ -64,7 +63,7 @@ CREATE TABLE Branches (
 )
 /
 
--- 3) ë³´ê´€í•¨ í…Œì´ë¸” (Lockers)
+-- 3) º¸°üÇÔ Å×ÀÌºí (Lockers)
 CREATE TABLE Lockers (
     locker_id     NUMBER PRIMARY KEY,
     branch_id     NUMBER,
@@ -76,7 +75,7 @@ CREATE TABLE Lockers (
 )
 /
 
--- 4) íƒë°° ë³´ê´€ í…Œì´ë¸” (Parcels)
+-- 4) ÅÃ¹è º¸°ü Å×ÀÌºí (Parcels)
 CREATE TABLE Parcels (
     parcel_id    NUMBER PRIMARY KEY,
     user_id      VARCHAR2(20),
@@ -92,7 +91,7 @@ CREATE TABLE Parcels (
 )
 /
 
--- 5) ì‹œìŠ¤í…œ ê¸°ë¡ í…Œì´ë¸” (SystemLogs)
+-- 5) ½Ã½ºÅÛ ±â·Ï Å×ÀÌºí (SystemLogs)
 CREATE TABLE SystemLogs (
     log_id      NUMBER PRIMARY KEY,
     user_id     VARCHAR2(20),
@@ -106,48 +105,58 @@ CREATE TABLE SystemLogs (
 /
 
 -- ==========================================================
--- 4. ì´ˆê¸° ìƒ˜í”Œ ë°ì´í„° ìž…ë ¥ (ê´€ë¦¬ìž ì½”ë“œ/ë¹„ë²ˆ íŠœí”Œ í¬í•¨)
+-- 4. ÃÊ±â »ùÇÃ µ¥ÀÌÅÍ ÀÔ·Â
 -- ==========================================================
 
--- 1) Users ìƒ˜í”Œ ë°ì´í„° (ê´€ë¦¬ìž ì½”ë“œ: admin / ë¹„ë²ˆ: admin1234, ë³´ì¡° ê´€ë¦¬ìž ì½”ë“œ: MGR001 / ë¹„ë²ˆ: 9999)
-INSERT INTO Users VALUES ('admin', 'ì´ê´„ê´€ë¦¬ìž', '010-0000-0000', 'admin1234', 'ADMIN', 'ACTIVE')
+-- 1) Users »ùÇÃ µ¥ÀÌÅÍ
+INSERT INTO Users VALUES ('admin', 'ÃÑ°ý°ü¸®ÀÚ', '010-0000-0000', 'admin1234', 'ADMIN', 'ACTIVE')
 /
-INSERT INTO Users VALUES ('MGR001', 'í˜„ìž¥ê´€ë¦¬ìž', '010-9999-8888', '9999', 'ADMIN', 'ACTIVE')
+INSERT INTO Users VALUES ('MGR001', 'ÇöÀå°ü¸®ÀÚ', '010-9999-8888', '9999', 'ADMIN', 'ACTIVE')
 /
-INSERT INTO Users VALUES ('courier01', 'ê¹€ê¸°ì‚¬', '010-1111-2222', 'courier123', 'COURIER', 'ACTIVE')
+INSERT INTO Users VALUES ('courier01', '±è±â»ç', '010-1111-2222', 'courier123', 'COURIER', 'ACTIVE')
 /
-INSERT INTO Users VALUES ('user01', 'í™ê¸¸ë™', '010-2222-3333', 'pass01', 'USER', 'ACTIVE')
+INSERT INTO Users VALUES ('user01', 'È«±æµ¿', '010-2222-3333', 'pass01', 'USER', 'ACTIVE')
 /
-INSERT INTO Users VALUES ('user02', 'ì´ìˆœì‹ ', '010-4444-5555', 'pass02', 'USER', 'ACTIVE')
+INSERT INTO Users VALUES ('user02', 'ÀÌ¼ø½Å', '010-4444-5555', 'pass02', 'USER', 'ACTIVE')
 /
-INSERT INTO Users VALUES ('user03', 'ê°•ê°ì°¬', '010-6666-7777', 'pass03', 'USER', 'ACTIVE')
-/
-
--- 2) Branches ìƒ˜í”Œ ë°ì´í„°
-INSERT INTO Branches VALUES (1, 'ë¶€ì²œëŒ€ ë³¸ê´€ì ', 'ê²½ê¸°ë„ ë¶€ì²œì‹œ ì‹ í¥ë¡œ 56', '032-610-0114')
-/
-INSERT INTO Branches VALUES (2, 'í•œê¸¸ì²´ìœ¡ê´€ì ', 'ê²½ê¸°ë„ ë¶€ì²œì‹œ ì‹ í¥ë¡œ 56 í•œê¸¸ê´€', '032-610-0115')
-/
-INSERT INTO Branches VALUES (3, 'ë¶€ì²œì—­ í™˜ìŠ¹ì„¼í„°ì ', 'ê²½ê¸°ë„ ë¶€ì²œì‹œ ë¶€ì²œë¡œ 1', '032-650-1234')
-/
-INSERT INTO Branches VALUES (4, 'ì†¡ë‚´ì—­ ë¶ë¶€ê´‘ìž¥ì ', 'ê²½ê¸°ë„ ë¶€ì²œì‹œ ì†¡ë‚´ëŒ€ë¡œ 43', '032-660-5678')
-/
-INSERT INTO Branches VALUES (5, 'ì‹ ì¤‘ë™ì—­ì ', 'ê²½ê¸°ë„ ë¶€ì²œì‹œ ê¸¸ì£¼ë¡œ 300', '032-320-9999')
+INSERT INTO Users VALUES ('user03', '°­°¨Âù', '010-6666-7777', 'pass03', 'USER', 'ACTIVE')
 /
 
--- 3) Lockers ìƒ˜í”Œ ë°ì´í„°
-INSERT INTO Lockers VALUES (101, 1, 'M', 'ë³¸ê´€ 1ì¸µ ë¬´ì¸íƒë°° ë¶€ìŠ¤', 'EMPTY')
+-- 2) Branches »ùÇÃ µ¥ÀÌÅÍ
+INSERT INTO Branches VALUES (1, 'ºÎÃµ´ë º»°üÁ¡', '°æ±âµµ ºÎÃµ½Ã ½ÅÈï·Î 56', '032-610-0114')
 /
-INSERT INTO Lockers VALUES (102, 1, 'L', 'ë³¸ê´€ 1ì¸µ ë¬´ì¸íƒë°° ë¶€ìŠ¤', 'OCCUPIED')
+INSERT INTO Branches VALUES (2, 'ÇÑ±æÃ¼À°°üÁ¡', '°æ±âµµ ºÎÃµ½Ã ½ÅÈï·Î 56 ÇÑ±æ°ü', '032-610-0115')
 /
-INSERT INTO Lockers VALUES (103, 1, 'S', 'ë³¸ê´€ 1ì¸µ ë¬´ì¸íƒë°° ë¶€ìŠ¤', 'OCCUPIED')
+INSERT INTO Branches VALUES (3, 'ºÎÃµ¿ª È¯½Â¼¾ÅÍÁ¡', '°æ±âµµ ºÎÃµ½Ã ºÎÃµ·Î 1', '032-650-1234')
 /
-INSERT INTO Lockers VALUES (104, 2, 'M', 'ì²´ìœ¡ê´€ ìž…êµ¬ ê²½ë¹„ì‹¤ ì˜†', 'BROKEN')
+INSERT INTO Branches VALUES (4, '¼Û³»¿ª ºÏºÎ±¤ÀåÁ¡', '°æ±âµµ ºÎÃµ½Ã ¼Û³»´ë·Î 43', '032-660-5678')
 /
-INSERT INTO Lockers VALUES (105, 3, 'L', 'ì§€í•˜ 1ì¸µ 2ë²ˆ ì¶œêµ¬', 'EMPTY')
+INSERT INTO Branches VALUES (5, '½ÅÁßµ¿¿ªÁ¡', '°æ±âµµ ºÎÃµ½Ã ±æÁÖ·Î 300', '032-320-9999')
 /
 
--- 4) Parcels ìƒ˜í”Œ ë°ì´í„°
+-- 3) Lockers »ùÇÃ µ¥ÀÌÅÍ (¸ðµç ÁöÁ¡¿¡ ºó º¸°üÇÔ Æ÷ÇÔ)
+INSERT INTO Lockers VALUES (101, 1, 'M', 'º»°ü 1Ãþ ¹«ÀÎÅÃ¹è ºÎ½º', 'EMPTY')
+/
+INSERT INTO Lockers VALUES (102, 1, 'L', 'º»°ü 1Ãþ ¹«ÀÎÅÃ¹è ºÎ½º', 'OCCUPIED')
+/
+INSERT INTO Lockers VALUES (103, 1, 'S', 'º»°ü 1Ãþ ¹«ÀÎÅÃ¹è ºÎ½º', 'OCCUPIED')
+/
+INSERT INTO Lockers VALUES (104, 2, 'M', 'Ã¼À°°ü ÀÔ±¸ °æºñ½Ç ¿·', 'BROKEN')
+/
+INSERT INTO Lockers VALUES (105, 3, 'L', 'ÁöÇÏ 1Ãþ 2¹ø Ãâ±¸', 'EMPTY')
+/
+INSERT INTO Lockers VALUES (106, 1, 'S', 'º»°ü 1Ãþ ¹«ÀÎÅÃ¹è ºÎ½º', 'EMPTY')
+/
+INSERT INTO Lockers VALUES (107, 2, 'M', 'Ã¼À°°ü ÀÔ±¸ °æºñ½Ç ¿·', 'EMPTY')
+/
+INSERT INTO Lockers VALUES (108, 3, 'M', 'ÁöÇÏ 1Ãþ 2¹ø Ãâ±¸', 'EMPTY')
+/
+INSERT INTO Lockers VALUES (109, 4, 'L', 'ºÏºÎ±¤Àå 1¹ø Ãâ±¸', 'EMPTY')
+/
+INSERT INTO Lockers VALUES (110, 5, 'M', '½ÅÁßµ¿¿ª 3¹ø Ãâ±¸', 'EMPTY')
+/
+
+-- 4) Parcels »ùÇÃ µ¥ÀÌÅÍ
 INSERT INTO Parcels VALUES (1, 'user01', 101, '111111', TO_DATE('2026-11-08 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-11 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-08 18:30:00', 'YYYY-MM-DD HH24:MI:SS'), 'RETRIEVED')
 /
 INSERT INTO Parcels VALUES (2, 'user02', 102, '748291', TO_DATE('2026-11-09 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-12 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), NULL, 'STORED')
@@ -159,16 +168,16 @@ INSERT INTO Parcels VALUES (4, 'user01', 101, '333444', TO_DATE('2026-11-05 14:0
 INSERT INTO Parcels VALUES (5, 'user02', 105, '777888', TO_DATE('2026-11-09 15:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2026-11-12 15:00:00', 'YYYY-MM-DD HH24:MI:SS'), NULL, 'RESERVED')
 /
 
--- 5) SystemLogs ìƒ˜í”Œ ë°ì´í„° (ì‚­ì œ í›„ ìž¬ì‹¤í–‰ ì‹œ ë³µêµ¬ë  ì›ë³¸ 5ê°œ íŠœí”Œ)
-INSERT INTO SystemLogs VALUES (1, 'courier01', 101, 'STORE', 'íƒë°° ë³´ê´€ ì™„ë£Œ (101í˜¸)', TO_DATE('2026-11-08 09:00:00', 'YYYY-MM-DD HH24:MI:SS'))
+-- 5) SystemLogs »ùÇÃ µ¥ÀÌÅÍ
+INSERT INTO SystemLogs VALUES (1, 'courier01', 101, 'STORE', 'ÅÃ¹è º¸°ü ¿Ï·á (101È£)', TO_DATE('2026-11-08 09:00:00', 'YYYY-MM-DD HH24:MI:SS'))
 /
-INSERT INTO SystemLogs VALUES (2, 'user01', 101, 'RETRIEVE', 'ì¸ì¦ë²ˆí˜¸ ì¼ì¹˜ ë° íƒë°° ìˆ˜ë ¹ ì™„ë£Œ', TO_DATE('2026-11-08 18:30:00', 'YYYY-MM-DD HH24:MI:SS'))
+INSERT INTO SystemLogs VALUES (2, 'user01', 101, 'RETRIEVE', 'ÀÎÁõ¹øÈ£ ÀÏÄ¡ ¹× ÅÃ¹è ¼ö·É ¿Ï·á', TO_DATE('2026-11-08 18:30:00', 'YYYY-MM-DD HH24:MI:SS'))
 /
-INSERT INTO SystemLogs VALUES (3, 'courier01', 102, 'STORE', 'íƒë°° ë³´ê´€ ì™„ë£Œ (102í˜¸)', TO_DATE('2026-11-09 10:00:00', 'YYYY-MM-DD HH24:MI:SS'))
+INSERT INTO SystemLogs VALUES (3, 'courier01', 102, 'STORE', 'ÅÃ¹è º¸°ü ¿Ï·á (102È£)', TO_DATE('2026-11-09 10:00:00', 'YYYY-MM-DD HH24:MI:SS'))
 /
-INSERT INTO SystemLogs VALUES (4, 'admin', NULL, 'LOGIN', 'ê´€ë¦¬ìž ëŒ€ì‹œë³´ë“œ ë¡œê·¸ì¸', TO_DATE('2026-11-09 12:00:00', 'YYYY-MM-DD HH24:MI:SS'))
+INSERT INTO SystemLogs VALUES (4, 'admin', NULL, 'LOGIN', '°ü¸®ÀÚ ´ë½Ãº¸µå ·Î±×ÀÎ', TO_DATE('2026-11-09 12:00:00', 'YYYY-MM-DD HH24:MI:SS'))
 /
-INSERT INTO SystemLogs VALUES (5, 'user01', 104, 'ERROR', 'ë³´ê´€í•¨ ë¬¸ ì—´ë¦¼ ì„¼ì„œ ì˜¤ë¥˜ ê°ì§€', TO_DATE('2026-11-09 14:00:00', 'YYYY-MM-DD HH24:MI:SS'))
+INSERT INTO SystemLogs VALUES (5, 'user01', 104, 'ERROR', 'º¸°üÇÔ ¹® ¿­¸² ¼¾¼­ ¿À·ù °¨Áö', TO_DATE('2026-11-09 14:00:00', 'YYYY-MM-DD HH24:MI:SS'))
 /
 
 COMMIT
