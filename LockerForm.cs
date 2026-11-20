@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
@@ -17,29 +17,16 @@ namespace BOX.App
         private readonly Button refreshButton = new Button();
         private readonly Button selectButton = new Button();
         private readonly Label branchLabel = new Label();
-        private readonly int selectedBranchId;
-        private readonly string selectedBranchName;
 
         public int SelectedLockerId { get; private set; }
         public string SelectedLockerSize { get; private set; }
         public string SelectedLockerLocation { get; private set; }
 
         public LockerForm()
-            : this(0, null)
         {
-        }
-
-        public LockerForm(int branchId, string branchName)
-        {
-            selectedBranchId = branchId;
-            selectedBranchName = branchName;
-
             InitializeForm();
             Load += LockerForm_Load;
         }
-
-
-
 
         private void InitializeForm()
         {
@@ -82,15 +69,6 @@ namespace BOX.App
 
         private void LockerForm_Load(object sender, EventArgs e)
         {
-            if (selectedBranchId > 0)
-            {
-                branchLabel.Text = "선택 지점: " + selectedBranchName;
-                branchComboBox.Visible = false;
-                refreshButton.Visible = false;
-                LoadLockers(selectedBranchId);
-                return;
-            }
-
             LoadBranches();
         }
 
@@ -123,17 +101,11 @@ namespace BOX.App
 
         private void LoadLockers()
         {
-            if (branchComboBox.SelectedValue == null ||
-                branchComboBox.SelectedValue is DataRowView)
+            if (branchComboBox.SelectedValue == null || !(branchComboBox.SelectedValue is int))
             {
                 return;
             }
 
-            LoadLockers(Convert.ToInt32(branchComboBox.SelectedValue));
-        }
-
-        private void LoadLockers(int branchId)
-        {
             try
             {
                 DataTable lockers = DBHelper.ExecuteQuery(
@@ -143,7 +115,7 @@ namespace BOX.App
                     {
                         new OracleParameter("branch_id", OracleDbType.Int32)
                         {
-                            Value = branchId
+                            Value = Convert.ToInt32(branchComboBox.SelectedValue)
                         }
                     });
 
@@ -190,24 +162,6 @@ namespace BOX.App
         {
             MessageBox.Show("데이터베이스를 불러오지 못했습니다.\n" + ex.Message,
                 "DB 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            // 
-            // LockerForm
-            // 
-            this.ClientSize = new System.Drawing.Size(274, 229);
-            this.Name = "LockerForm";
-            this.Load += new System.EventHandler(this.LockerForm_Load_1);
-            this.ResumeLayout(false);
-
-        }
-
-        private void LockerForm_Load_1(object sender, EventArgs e)
-        {
-
         }
     }
 }

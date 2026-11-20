@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Security.Cryptography;
@@ -14,8 +14,6 @@ namespace BOX.App
     public class ParcelForm : Form
     {
         private readonly string userId;
-        private readonly int selectedBranchId;
-        private readonly string selectedBranchName;
         private int selectedLockerId;
         private string selectedLockerLocation;
         private string authCode;
@@ -26,22 +24,14 @@ namespace BOX.App
         private readonly TextBox locationTextBox = new TextBox();
         private readonly TextBox authCodeTextBox = new TextBox();
         private readonly Label statusLabel = new Label();
-        private readonly Label branchTextLabel = new Label();
         private readonly Button selectLockerButton = new Button();
         private readonly Button requestButton = new Button();
         private readonly Button copyButton = new Button();
         private readonly Button depositButton = new Button();
 
         public ParcelForm(string userId)
-            : this(userId, 0, null)
-        {
-        }
-
-        public ParcelForm(string userId, int branchId, string branchName)
         {
             this.userId = userId;
-            this.selectedBranchId = branchId;
-            this.selectedBranchName = branchName;
             InitializeForm();
         }
 
@@ -57,49 +47,43 @@ namespace BOX.App
             userIdTextBox.ReadOnly = true;
             userIdTextBox.Text = userId;
 
-            AddLabel("신청 지점", 30, 75);
-            branchTextLabel.Location = new Point(160, 71);
-            branchTextLabel.AutoSize = true;
-            branchTextLabel.Text = string.IsNullOrWhiteSpace(selectedBranchName) ? "지점이 선택되지 않았습니다." : selectedBranchName;
-            Controls.Add(branchTextLabel);
-
-            AddLabel("보관함", 30, 120);
-            lockerTextBox.Location = new Point(160, 116);
+            AddLabel("보관함", 30, 75);
+            lockerTextBox.Location = new Point(160, 71);
             lockerTextBox.Width = 150;
             lockerTextBox.ReadOnly = true;
             selectLockerButton.Text = "보관함 선택";
-            selectLockerButton.Location = new Point(330, 115);
+            selectLockerButton.Location = new Point(330, 70);
             selectLockerButton.Width = 120;
             selectLockerButton.Click += SelectLockerButton_Click;
 
-            AddLabel("상세 위치", 30, 165);
-            locationTextBox.Location = new Point(160, 161);
+            AddLabel("상세 위치", 30, 120);
+            locationTextBox.Location = new Point(160, 116);
             locationTextBox.Width = 290;
             locationTextBox.ReadOnly = true;
 
-            AddLabel("인증번호", 30, 210);
-            authCodeTextBox.Location = new Point(160, 206);
+            AddLabel("인증번호", 30, 165);
+            authCodeTextBox.Location = new Point(160, 161);
             authCodeTextBox.Width = 150;
             authCodeTextBox.ReadOnly = true;
             copyButton.Text = "인증번호 복사";
-            copyButton.Location = new Point(330, 205);
+            copyButton.Location = new Point(330, 160);
             copyButton.Width = 120;
             copyButton.Click += CopyButton_Click;
 
             requestButton.Text = "보관 신청 및 인증번호 발급";
-            requestButton.Location = new Point(160, 260);
+            requestButton.Location = new Point(160, 215);
             requestButton.Width = 290;
             requestButton.Height = 35;
             requestButton.Click += RequestButton_Click;
 
             depositButton.Text = "택배기사 투입 완료 처리";
-            depositButton.Location = new Point(160, 310);
+            depositButton.Location = new Point(160, 265);
             depositButton.Width = 290;
             depositButton.Height = 35;
             depositButton.Click += DepositButton_Click;
 
             statusLabel.AutoSize = true;
-            statusLabel.Location = new Point(160, 370);
+            statusLabel.Location = new Point(160, 325);
             statusLabel.Text = "상태: 보관함과 택배 정보를 입력하세요.";
 
             Controls.Add(userIdTextBox);
@@ -124,9 +108,7 @@ namespace BOX.App
 
         private void SelectLockerButton_Click(object sender, EventArgs e)
         {
-            using (LockerForm form = selectedBranchId > 0
-                ? new LockerForm(selectedBranchId, selectedBranchName)
-                : new LockerForm())
+            using (LockerForm form = new LockerForm())
             {
                 if (form.ShowDialog(this) == DialogResult.OK)
                 {
@@ -144,12 +126,6 @@ namespace BOX.App
             if (selectedLockerId == 0)
             {
                 MessageBox.Show("먼저 빈 보관함을 선택해주세요.");
-                return;
-            }
-
-            if (parcelId != 0)
-            {
-                MessageBox.Show("이미 보관 신청이 완료되었습니다.");
                 return;
             }
 
@@ -172,36 +148,21 @@ namespace BOX.App
                     new OracleParameter("auth_code", OracleDbType.Varchar2) { Value = authCode }
                 });
 
-                int lockerRows = DBHelper.ExecuteNonQuery(
+                DBHelper.ExecuteNonQuery(
                     "UPDATE Lockers SET status = 'RESERVED' WHERE locker_id = :locker_id AND status = 'EMPTY'",
                     new[]
                     {
                         new OracleParameter("locker_id", OracleDbType.Int32) { Value = selectedLockerId }
                     });
 
-                if (lockerRows == 0)
-                {
-                    MessageBox.Show("선택한 보관함이 더 이상 비어 있지 않습니다. 새로고침 후 다시 선택해주세요.");
-                    return;
-                }
-
                 authCodeTextBox.Text = authCode;
                 statusLabel.Text = "상태: 보관 신청이 완료되었습니다. 택배기사에게 인증번호를 전달하세요.";
                 MessageBox.Show("보관 신청과 인증번호 발급이 완료되었습니다.");
-
-              /*  // 신청 완료 후 시스템 로그/인증 화면으로 이동합니다.
-                using (SystemLogForm systemLogForm = new SystemLogForm(userId))
-                {
-                    Hide();
-                    systemLogForm.ShowDialog(this);
-                    Show();
-                }*/
             }
             catch (Exception ex)
             {
                 ShowDatabaseError(ex);
             }
-
         }
 
         private void CopyButton_Click(object sender, EventArgs e)
@@ -212,14 +173,10 @@ namespace BOX.App
                 return;
             }
 
-            // Clipboard API 직접 호출 대신 텍스트박스 자체 복사(WM_COPY) 사용
-            authCodeTextBox.SelectAll();
-            authCodeTextBox.Copy();
-            authCodeTextBox.DeselectAll();
-
+            Clipboard.SetText(authCodeTextBox.Text);
             MessageBox.Show("인증번호가 복사되었습니다.");
         }
-        
+
         private void DepositButton_Click(object sender, EventArgs e)
         {
             if (parcelId == 0)
@@ -230,7 +187,6 @@ namespace BOX.App
 
             try
             {
-                // 1. 먼저 DB 상태를 'STORED'로 업데이트
                 int parcelRows = DBHelper.ExecuteNonQuery(
                     "UPDATE Parcels SET status = 'STORED', stored_at = SYSDATE " +
                     "WHERE parcel_id = :parcel_id AND auth_code = :auth_code AND status = 'RESERVED'",
@@ -255,20 +211,13 @@ namespace BOX.App
 
                 statusLabel.Text = "상태: 택배 투입 완료. 현재 보관 중입니다.";
                 MessageBox.Show("택배 투입 처리가 완료되었습니다.");
-
-                // 2. DB 업데이트 완료 후 인증번호를 넘겨주며 수령 화면으로 이동
-                using (SystemLogForm systemLogForm = new SystemLogForm(userId, authCode))
-                {
-                    Hide();
-                    systemLogForm.ShowDialog(this);
-                    Show();
-                }
             }
             catch (Exception ex)
             {
                 ShowDatabaseError(ex);
             }
         }
+
         private string GenerateAuthCode()
         {
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
@@ -284,25 +233,6 @@ namespace BOX.App
         {
             MessageBox.Show("데이터베이스 작업에 실패했습니다.\n" + ex.Message,
                 "DB 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            // 
-            // ParcelForm
-            // 
-            this.ClientSize = new System.Drawing.Size(274, 229);
-            this.Name = "ParcelForm";
-            this.Text = "택배 보관 신청";
-            this.Load += new System.EventHandler(this.ParcelForm_Load);
-            this.ResumeLayout(false);
-
-        }
-
-        private void ParcelForm_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }
